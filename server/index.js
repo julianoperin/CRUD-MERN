@@ -1,8 +1,12 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const cors = require("cors"); //! CORS
 //! Import from Models
 const FoodModel = require("./models/Food");
+
+//! CORS
+app.use(cors());
 
 app.use(express.json());
 
@@ -14,8 +18,11 @@ mongoose.connect(
   }
 );
 
-app.get("/", async (req, res) => {
-  const food = new FoodModel({ foodName: "Apple", daysSinceIAte: 3 });
+app.post("/insert", async (req, res) => {
+  const foodName = req.body.foodName;
+  const days = req.body.days;
+
+  const food = new FoodModel({ foodName: foodName, daysSinceIAte: days });
 
   try {
     await food.save();
@@ -23,6 +30,15 @@ app.get("/", async (req, res) => {
   } catch (error) {
     console.log(error);
   }
+});
+
+app.get("/read", async (req, res) => {
+  FoodModel.find({}, (err, result) => {
+    if (err) {
+      res.send(err);
+    }
+    res.send(result);
+  });
 });
 
 app.listen(3001, () => {
