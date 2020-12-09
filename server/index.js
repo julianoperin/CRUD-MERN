@@ -18,6 +18,7 @@ mongoose.connect(
   }
 );
 
+//! POST
 app.post("/insert", async (req, res) => {
   const foodName = req.body.foodName;
   const days = req.body.days;
@@ -32,6 +33,7 @@ app.post("/insert", async (req, res) => {
   }
 });
 
+//! GET
 app.get("/read", async (req, res) => {
   FoodModel.find({}, (err, result) => {
     if (err) {
@@ -40,6 +42,24 @@ app.get("/read", async (req, res) => {
     res.send(result);
   });
 });
+
+//!UPDATE
+app.put("/update", async (req, res) => {
+  const newFoodName = req.body.newFoodName;
+  const id = req.body.id;
+
+  try {
+    await FoodModel.findById(id, (err, updatedFood) => {
+      updatedFood.foodName = newFoodName;
+      updatedFood.save();
+      res.send("update");
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//! DELETE
 
 app.listen(3001, () => {
   console.log("Server running on port 3001!");
